@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package realworld.v1;
+
+option go_package = "kratos-realworld-r/api/realworld/v1;v1";
+
+/*此次项目用不到与java相关的，可以忽略或删除
+option java_multiple_files = true;
+option java_package = "realworld.v1";
+option objc_class_prefix = "APIHelloworldV1";
+*/
+enum ErrorReason {
+  GREETER_UNSPECIFIED = 0;
+  USER_NOT_FOUND = 1;
+}

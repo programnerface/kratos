@@ -1,0 +1,379 @@
+syntax = "proto3";
+
+package realworld.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "kratos-realworld-r/api/realworld/v1;v1";
+
+/*此次项目用不到与java相关的，可以忽略或删除
+option java_multiple_files = true;
+option java_package = "dev.kratos.api.realworld.v1";
+option java_outer_classname = "HelloworldProtoV1";
+*/
+
+// The greeting service definition.
+service RealWorld {
+  rpc Login(LoginRequest) returns (UserReply){
+    option (google.api.http) ={
+      post: "/api/users/login",
+      body:"*",
+    };
+  }
+
+  rpc Register(RegisterRequest) returns (UserReply){
+    option (google.api.http) ={
+      post: "/api/users",
+      body:"*",
+    };
+  }
+
+  rpc GetCurrentUser(GetCurrentUserRequest) returns (UserReply){
+    option (google.api.http) ={
+      get: "/api/user",
+    };
+  }
+
+  rpc UpdateUser(UpdateUserReuest) returns (UserReply){
+    option (google.api.http) ={
+      put: "/api/user",
+      body:"*",
+    };
+  }
+
+  rpc GetProfile(GetProfileRequest) returns (ProfileReply){
+    option (google.api.http) ={
+      get: "/api/profiles/{username}",
+    };
+  }
+
+  rpc FollowUser(FollowUserRequest) returns (ProfileReply){
+    option (google.api.http) ={
+      post: "/api/profiles/{username}/follow",
+      body:"*",
+    };
+  }
+
+  rpc UnfollowUser(UnfollowUserRequest) returns (ProfileReply){
+    option (google.api.http) ={
+      delete: "/api/profiles/{username}/follow",
+    };
+  }
+
+  rpc ListArticles(ListArticlesRequest) returns (MultipleArticleReply){
+    option (google.api.http) ={
+      get: "/api/articles",
+    };
+  }
+
+  rpc FeedArticles(FeedArticlesRequest) returns (MultipleArticleReply){
+    option (google.api.http) ={
+      get: "/api/articles/feed",
+    };
+  }
+
+  rpc GetArticles(GetArticlesRequest) returns (SingleAticeReply){
+    option (google.api.http) ={
+      get: "/api/articles/{slug}",
+    };
+  }
+
+  rpc GreateArticles(GreateArticlesRequest) returns (SingleAticeReply){
+    option (google.api.http) ={
+      post: "/api/articles",
+      body:"*",
+    };
+  }
+
+  rpc UpdateArticles(UpdateArticlesRequest) returns (SingleAticeReply){
+    option (google.api.http) ={
+      put: "/api/articles/{slug}",
+      body:"*",
+    };
+  }
+
+  rpc DeleteArticles(DeleteArticlesRequest) returns (SingleAticeReply){
+    option (google.api.http) ={
+      delete: "/api/articles/{slug}",
+    };
+  }
+
+  rpc AddComment(AddCommentRequest) returns (SingleCommentReply){
+    option (google.api.http) ={
+      post: "/api/articles/{slug}/comments",
+      body:"*",
+    };
+  }
+
+  rpc GetComments(GetCommentsRequest) returns (MultipleCommentsReply){
+    option (google.api.http) ={
+      get: "/api/articles/{slug}/comments",
+    };
+  }
+
+  rpc DeleteComments(DeleteCommentsRequest) returns (SingleCommentReply){
+    option (google.api.http) ={
+      delete: "/api/articles/{slug}/comments/{id}",
+    };
+  }
+
+  rpc FavoriteArticle(FavoriteArticleRequest) returns (SingleAticeReply){
+    option (google.api.http) ={
+      post: "/api/articles/{slug}/favorite",
+      body:"*",
+    };
+  }
+
+  rpc UnFavoriteArticle(UnFavoriteArticleRequest) returns (SingleAticeReply){
+    option (google.api.http) ={
+      delete: "/api/articles/{slug}/favorite",
+    };
+  }
+
+  rpc GetTags(GetTagsRequest) returns (TagListReply){
+    option (google.api.http) ={
+      get: "/api/tags",
+    };
+  }
+
+}
+
+message GetTagsRequest{}
+
+message FavoriteArticleRequest{
+  string slug = 1;
+}
+
+message UnFavoriteArticleRequest{
+  string slug = 1;
+}
+
+message DeleteCommentsRequest{
+  string slug = 1;
+  int64  id = 2;
+}
+
+message GetCommentsRequest{
+  string slug =1;
+}
+
+message AddCommentRequest {
+
+  message Comment {
+    string body = 1;
+  }
+
+  Comment comment = 1;
+  string  slug = 2;
+}
+
+message DeleteArticlesRequest{
+  string slug = 1;
+}
+
+message UpdateArticlesRequest {
+
+  message Article {
+    string title = 1;
+    string description = 2;
+    string body = 3;
+    repeated string tagList = 4;
+  }
+
+  Article article = 1;
+  string slug = 2;
+}
+
+message GreateArticlesRequest {
+
+  message Article {
+    string title = 1;
+    string description = 2;
+    string body = 3;
+    repeated string tagList = 4;
+  }
+
+  Article article = 1;
+}
+
+message GetArticlesRequest{
+  string slug = 1;
+}
+
+message FeedArticlesRequest{
+  int64 limit = 1;
+  int64 offset = 2;
+}
+
+message ListArticlesRequest{
+  string tag = 1;
+  string author = 2;
+  string favorited = 3;
+  int64 limit = 4;
+  int64 offset = 5;
+}
+
+message UnfollowUserRequest{
+  string username = 1;
+}
+
+message FollowUserRequest{
+  string username = 1;
+}
+
+message GetProfileRequest{
+  string username = 1;
+}
+
+//GET方法没有东西要传，直接写一个空message就可以了
+message GetCurrentUserRequest{}
+
+message UpdateUserReuest {
+
+  message User {
+    string email = 1;
+    string token = 2;
+    string username = 3;
+    string bio = 4;
+    string image = 5;
+  }
+
+  User user = 1;
+}
+
+//Reply相当于response 返回的结果
+message UserReply{
+    message User{
+      string email = 1;
+      string token = 2;
+      string username = 3;
+      string bio = 4;
+      string image = 5;
+    }
+  User user =1;
+}
+
+message ProfileReply{
+  message Profile{
+    string username = 1;
+    string bio = 2;
+    string image = 3;
+    bool following = 4;
+  }
+    Profile profile =1;
+}
+
+message SingleAticeReply {
+
+  message Author {
+    string username = 1;
+    string bio = 2;
+    string image = 3;
+    bool following = 4;
+  }
+
+  message Article {
+    string slug = 1;
+    string title = 2;
+    string description = 3;
+    string body = 4;
+    repeated string tagList = 5;
+    string createdAt = 6;
+    string updatedAt = 7;
+    bool favorited = 8;
+    uint32 favoritesCount = 9;
+    Author author = 10;
+  }
+
+  Article article = 1;
+}
+
+message MultipleArticleReply {
+
+  message Author {
+    string username = 1;
+    string bio = 2;
+    string image = 3;
+    bool following = 4;
+  }
+
+  message Articles {
+    string slug = 1;
+    string title = 2;
+    string description = 3;
+    string body = 4;
+    repeated string tagList = 5;
+    string createdAt = 6;
+    string updatedAt = 7;
+    bool favorited = 8;
+    uint32 favoritesCount = 9;
+    Author author = 10;
+  }
+
+  repeated Articles articles = 1;
+  uint32 articles_count = 2;
+}
+
+message SingleCommentReply {
+
+  message Author {
+    string username = 1;
+    string bio = 2;
+    string image = 3;
+    bool following = 4;
+  }
+
+  message Comment {
+    uint32 id = 1;
+    string createdAt = 2;
+    string updatedAt = 3;
+    string body = 4;
+    Author author = 5;
+  }
+
+  Comment comment = 1;
+}
+
+message MultipleCommentsReply {
+
+  message Author {
+    string username = 1;
+    string bio = 2;
+    string image = 3;
+    bool following = 4;
+  }
+
+  message Comments {
+    uint32 id = 1;
+    string createdAt = 2;
+    string updatedAt = 3;
+    string body = 4;
+    Author author = 5;
+  }
+
+  repeated Comments comments = 1;
+}
+
+message TagListReply {
+  //repeated表示数组、列表的结构
+  repeated string tags = 1;
+}
+
+message LoginRequest{
+  message User{
+    string email = 1;
+    string password = 2;
+  }
+  //引用上面的User
+  User user = 1;
+}
+
+message RegisterRequest{
+  message User{
+    string username = 1;
+    string email = 2;
+    string password = 3;
+  }
+  //引用上面的User
+  User user = 1;
+}
