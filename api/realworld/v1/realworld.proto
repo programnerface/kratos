@@ -60,39 +60,39 @@ service RealWorld {
     };
   }
 
-  rpc ListArticles(ListArticlesRequest) returns (MultipleArticleReply){
+  rpc ListArticles(ListArticlesRequest) returns (MultipleArticlesReply){
     option (google.api.http) ={
       get: "/api/articles",
     };
   }
 
-  rpc FeedArticles(FeedArticlesRequest) returns (MultipleArticleReply){
+  rpc FeedArticles(FeedArticlesRequest) returns (MultipleArticlesReply){
     option (google.api.http) ={
       get: "/api/articles/feed",
     };
   }
 
-  rpc GetArticles(GetArticlesRequest) returns (SingleAticeReply){
+  rpc GetArticle(GetArticleRequest) returns (SingleAticeReply){
     option (google.api.http) ={
       get: "/api/articles/{slug}",
     };
   }
 
-  rpc GreateArticles(GreateArticlesRequest) returns (SingleAticeReply){
+  rpc CreateArticle(CreateArticleRequest) returns (SingleAticeReply){
     option (google.api.http) ={
       post: "/api/articles",
       body:"*",
     };
   }
 
-  rpc UpdateArticles(UpdateArticlesRequest) returns (SingleAticeReply){
+  rpc UpdateArticle(UpdateArticleRequest) returns (SingleAticeReply){
     option (google.api.http) ={
       put: "/api/articles/{slug}",
       body:"*",
     };
   }
 
-  rpc DeleteArticles(DeleteArticlesRequest) returns (SingleAticeReply){
+  rpc DeleteArticle(DeleteArticleRequest) returns (SingleAticeReply){
     option (google.api.http) ={
       delete: "/api/articles/{slug}",
     };
@@ -167,11 +167,11 @@ message AddCommentRequest {
   string  slug = 2;
 }
 
-message DeleteArticlesRequest{
+message DeleteArticleRequest{
   string slug = 1;
 }
 
-message UpdateArticlesRequest {
+message UpdateArticleRequest {
 
   message Article {
     string title = 1;
@@ -184,7 +184,7 @@ message UpdateArticlesRequest {
   string slug = 2;
 }
 
-message GreateArticlesRequest {
+message CreateArticleRequest {
 
   message Article {
     string title = 1;
@@ -196,7 +196,7 @@ message GreateArticlesRequest {
   Article article = 1;
 }
 
-message GetArticlesRequest{
+message GetArticleRequest{
   string slug = 1;
 }
 
@@ -288,7 +288,7 @@ message SingleAticeReply {
   Article article = 1;
 }
 
-message MultipleArticleReply {
+message MultipleArticlesReply {
 
   message Author {
     string username = 1;

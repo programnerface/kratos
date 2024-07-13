@@ -24,6 +24,22 @@ func (s *RealWorldService) Register(ctx context.Context, req *v1.RegisterRequest
 	}, nil
 }
 
+func (s *RealWorldService) GetCurrentUser(ctx context.Context, req *v1.GetCurrentUserRequest) (reply *v1.UserReply, err error) {
+	return &v1.UserReply{
+		User: &v1.UserReply_User{
+			Username: "face",
+		},
+	}, nil
+}
+
+func (s *RealWorldService) UpdateUser(ctx context.Context, req *v1.UpdateUserReuest) (reply *v1.UserReply, err error) {
+	return &v1.UserReply{
+		User: &v1.UserReply_User{
+			Username: "face",
+		},
+	}, nil
+}
+
 // // SayHello implements realworld.GreeterServer.
 //
 //	func (s *RealWorldService) Login(ctx context.Context, in *v1.LoginRequest) (*v1.user, error) {
@@ -33,6 +49,3 @@ func (s *RealWorldService) Register(ctx context.Context, req *v1.RegisterRequest
 //		}
 //		return &v1.HelloReply{Message: "Hello " + g.Hello}, nil
 //	}
-func (s *RealWorldService) AddComment(ctx context.Context, req *v1.AddCommentRequest) (reply *v1.SingleCommentReply, err error) {
-	return &v1.SingleCommentReply{}, nil
-}
