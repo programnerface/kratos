@@ -6,6 +6,8 @@ import (
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"golang.org/x/crypto/bcrypt"
+	"kratos-realworld-r/internal/conf"
+	"kratos-realworld-r/internal/pkg/middleware/auth"
 )
 
 // 领域对象
@@ -54,14 +56,15 @@ type ProfileRepo interface {
 
 // GreeterUsecase is a Greeter usecase.
 type UserUsecase struct {
-	ur  UserRepo
-	pr  ProfileRepo
-	log *log.Helper
+	ur   UserRepo
+	pr   ProfileRepo
+	jwtc *conf.JWT
+	log  *log.Helper
 }
 
 // NewGreeterUsecase new a Greeter usecase.
-func NewUserUsecase(ur UserRepo, pr ProfileRepo, logger log.Logger) *UserUsecase {
-	return &UserUsecase{ur: ur, pr: pr, log: log.NewHelper(logger)}
+func NewUserUsecase(ur UserRepo, pr ProfileRepo, jwtc *conf.JWT, logger log.Logger) *UserUsecase {
+	return &UserUsecase{ur: ur, pr: pr, jwtc: jwtc, log: log.NewHelper(logger)}
 }
 
 // CreateGreeter creates a Greeter, and returns the new Greeter.
@@ -69,6 +72,10 @@ func NewUserUsecase(ur UserRepo, pr ProfileRepo, logger log.Logger) *UserUsecase
 //	uc.log.WithContext(ctx).Infof("CreateGreeter: %v", g.Hello)
 //	return uc.repo.Save(ctx, g)
 //}
+
+func (uc *UserUsecase) generateToken(username string) string {
+	return auth.GenerateToken(uc.jwtc.Token, username)
+}
 
 func (uc *UserUsecase) Register(ctx context.Context, username, email, password string) (*UserLogin, error) {
 	// 创建User结构体
@@ -84,7 +91,7 @@ func (uc *UserUsecase) Register(ctx context.Context, username, email, password s
 	return &UserLogin{
 		Email:    email,
 		Username: username,
-		Token:    "xxx",
+		Token:    uc.generateToken(username),
 	}, nil
 }
 
@@ -101,6 +108,6 @@ func (uc *UserUsecase) Login(ctx context.Context, email, password string) (*User
 		Username: u.Username,
 		Bio:      u.Bio,
 		Image:    u.Image,
-		Token:    "abc",
+		Token:    uc.generateToken(u.Username),
 	}, nil
 }

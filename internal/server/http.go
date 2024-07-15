@@ -1,8 +1,11 @@
 package server
 
 import (
+	"context"
+	"github.com/go-kratos/kratos/v2/middleware/selector"
 	v1 "kratos-realworld-r/api/realworld/v1"
 	"kratos-realworld-r/internal/conf"
+	"kratos-realworld-r/internal/pkg/middleware/auth"
 	"kratos-realworld-r/internal/service"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -10,11 +13,30 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/http"
 )
 
+// 中间件路径白名单
+func NewSkipRoutersMatcher() selector.MatchFunc {
+
+	skipRouters := make(map[string]struct{})
+	//路由规则为 /包名.服务名/方法名(/package.Service/Method)
+	skipRouters["/realworld.v1.RealWorld/Login"] = struct{}{}
+	skipRouters["/realworld.v1.RealWorld/Register"] = struct{}{}
+	return func(ctx context.Context, operation string) bool {
+		if _, ok := skipRouters[operation]; ok {
+			return false
+		}
+		return true
+	}
+}
+
 // NewHTTPServer new an HTTP server.
-func NewHTTPServer(c *conf.Server, greeter *service.RealWorldService, logger log.Logger) *http.Server {
+func NewHTTPServer(c *conf.Server, jwtc *conf.JWT, greeter *service.RealWorldService, logger log.Logger) *http.Server {
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
+			//全局生效
+			//auth.JWTAuth(jwtc.Token),
+
+			selector.Server(auth.JWTAuth(jwtc.Token)).Match(NewSkipRoutersMatcher()).Build(),
 		),
 	}
 	if c.Http.Network != "" {
