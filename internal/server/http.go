@@ -2,11 +2,14 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"github.com/go-kratos/kratos/v2/middleware/selector"
+	"github.com/gorilla/handlers"
 	v1 "kratos-realworld-r/api/realworld/v1"
 	"kratos-realworld-r/internal/conf"
 	"kratos-realworld-r/internal/pkg/middleware/auth"
 	"kratos-realworld-r/internal/service"
+	nethttp "net/http"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
@@ -37,6 +40,33 @@ func NewHTTPServer(c *conf.Server, jwtc *conf.JWT, greeter *service.RealWorldSer
 			//auth.JWTAuth(jwtc.Token),
 
 			selector.Server(auth.JWTAuth(jwtc.Token)).Match(NewSkipRoutersMatcher()).Build(),
+		),
+		http.Filter(
+			//如果请求有进来，那么就会打印方法里的内容
+			//https://github.com/go-kratos/examples/blob/main/http/middlewares/middlewares.go
+			func(h nethttp.Handler) nethttp.Handler {
+				return nethttp.HandlerFunc(func(w nethttp.ResponseWriter, r *nethttp.Request) {
+					//进入时会打印 in,出去时会打印out
+					fmt.Println("route filter 2 in")
+					h.ServeHTTP(w, r)
+					fmt.Println("route filter 2 out")
+				})
+			},
+			/*
+					在Postman测试时，Header必须加上下面三个参数
+						Access-Control-Request-Method POST
+						Access-Control-Request-Headers Content-Type
+						Origin http://farer.org
+				因为我们设置的是允许所有访问，所有必须要有 Origin这个参数
+			*/
+			handlers.CORS(
+				//允许的请求头部
+				handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}),
+				//允许跨域访问的方法
+				handlers.AllowedMethods([]string{"GET", "POST", "PUT", "OPTIONS"}),
+				//允许所有域名访问，也可以换成指定的域名
+				handlers.AllowedOrigins([]string{"*"}),
+			),
 		),
 	}
 	if c.Http.Network != "" {
