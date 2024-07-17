@@ -34,6 +34,8 @@ func NewSkipRoutersMatcher() selector.MatchFunc {
 // NewHTTPServer new an HTTP server.
 func NewHTTPServer(c *conf.Server, jwtc *conf.JWT, greeter *service.RealWorldService, logger log.Logger) *http.Server {
 	var opts = []http.ServerOption{
+		//初始化加上ErrorEncoder,把我们的errorEncoder带过去
+		http.ErrorEncoder(errorEncoder),
 		http.Middleware(
 			recovery.Recovery(),
 			//全局生效

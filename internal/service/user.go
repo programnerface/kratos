@@ -2,12 +2,15 @@ package service
 
 import (
 	"context"
-
 	v1 "kratos-realworld-r/api/realworld/v1"
+	"kratos-realworld-r/internal/errors"
 )
 
 // SayHello implements realworld.GreeterServer.
 func (s *RealWorldService) Login(ctx context.Context, req *v1.LoginRequest) (reply *v1.UserReply, err error) {
+	if len(req.User.Email) == 0 {
+		return nil, errors.NewHTTPError(422, "email", "can't no empty")
+	}
 
 	return &v1.UserReply{
 		User: &v1.UserReply_User{
