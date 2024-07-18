@@ -3,6 +3,7 @@ package biz
 import (
 	"context"
 	v1 "kratos-realworld-r/api/realworld/v1"
+	"time"
 
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
@@ -15,11 +16,21 @@ var (
 
 // GreeterRepo is a Greater repo.
 type ArticleRepo interface {
-}
+	ListArticles(ctx context.Context, opt ...ListOption) ([]*Article, error)
+	FeedArticles(ctx context.Context, opt ...ListOption) ([]*Article, error)
+	GetArticle(ctx context.Context, slug string) (*Article, error)
+	CreateArticle(ctx context.Context, a Article) (*Article, error)
+	UpdateArticle(ctx context.Context, a Article) (*Article, error)
+	DeleteArticle(ctx context.Context, a Article) (*Article, error)
 
+	FavoriteArticle(ctx context.Context, slug string) (*Article, error)
+	UnfavoriteArticle(ctx context.Context, slug string) (*Article, error)
+}
+type Tag string
 type CommentRepo interface {
 }
 type TagRepo interface {
+	GetTags(ctx context.Context) ([]*Tag, error)
 }
 
 // GreeterUsecase is a Greeter usecase.
@@ -28,6 +39,18 @@ type SocialUsecase struct {
 	cr  CommentRepo
 	tr  TagRepo
 	log *log.Helper
+}
+
+type Article struct {
+	Slug           string
+	Title          string
+	Description    string
+	Body           string
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
+	Favorite       bool
+	FavoritesCount int64
+	Author         *User
 }
 
 // NewGreeterUsecase new a Greeter usecase.
