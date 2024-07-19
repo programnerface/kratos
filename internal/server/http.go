@@ -2,18 +2,15 @@ package server
 
 import (
 	"context"
-	"fmt"
+	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/middleware/selector"
+	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/gorilla/handlers"
 	v1 "kratos-realworld-r/api/realworld/v1"
 	"kratos-realworld-r/internal/conf"
 	"kratos-realworld-r/internal/pkg/middleware/auth"
 	"kratos-realworld-r/internal/service"
-	nethttp "net/http"
-
-	"github.com/go-kratos/kratos/v2/log"
-	"github.com/go-kratos/kratos/v2/middleware/recovery"
-	"github.com/go-kratos/kratos/v2/transport/http"
 )
 
 // 中间件路径白名单
@@ -46,14 +43,15 @@ func NewHTTPServer(c *conf.Server, jwtc *conf.JWT, greeter *service.RealWorldSer
 		http.Filter(
 			//如果请求有进来，那么就会打印方法里的内容
 			//https://github.com/go-kratos/examples/blob/main/http/middlewares/middlewares.go
-			func(h nethttp.Handler) nethttp.Handler {
-				return nethttp.HandlerFunc(func(w nethttp.ResponseWriter, r *nethttp.Request) {
-					//进入时会打印 in,出去时会打印out
-					fmt.Println("route filter 2 in")
-					h.ServeHTTP(w, r)
-					fmt.Println("route filter 2 out")
-				})
-			},
+			//Postman请求时，终端返回的 route filter 2 in [36 50 ..很多数字] 把这段代码去掉-07/19
+			//func(h nethttp.Handler) nethttp.Handler {
+			//	return nethttp.HandlerFunc(func(w nethttp.ResponseWriter, r *nethttp.Request) {
+			//		//进入时会打印 in,出去时会打印out
+			//		fmt.Println("route filter 2 in")
+			//		h.ServeHTTP(w, r)
+			//		fmt.Println("route filter 2 out")
+			//	})
+			//},
 			/*
 					在Postman测试时，Header必须加上下面三个参数
 						Access-Control-Request-Method POST

@@ -53,9 +53,9 @@ type UserRepo interface {
 }
 
 type ProfileRepo interface {
-	GetProfile(ctx context.Context, username string) (*Profile, error)
-	FollowUser(ctx context.Context, username string) error
-	UnfollowUser(ctx context.Context, username string) error
+	//GetProfile(ctx context.Context, username string) (*Profile, error)
+	//FollowUser(ctx context.Context, username string) error
+	//UnfollowUser(ctx context.Context, username string) error
 }
 
 // GreeterUsecase is a Greeter usecase.

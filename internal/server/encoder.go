@@ -21,8 +21,12 @@ func errorEncoder(w nethttp.ResponseWriter, r *nethttp.Request, err error) {
 	}
 	//写入Header
 	w.Header().Set("Content-Type", "application/"+codec.Name())
-	//写入Http code
-	w.WriteHeader(se.Code)
+	if se.Code > 99 && se.Code < 600 {
+		//写入Http code
+		w.WriteHeader(se.Code)
+	} else {
+		w.WriteHeader(500)
+	}
 	//把内容 write到body里面
 	_, _ = w.Write(body)
 }

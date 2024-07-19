@@ -27,12 +27,19 @@ func NewData(c *conf.Data, logger log.Logger, db *gorm.DB) (*Data, func(), error
 }
 
 func NewDB(c *conf.Data) *gorm.DB {
-	db, err := gorm.Open(mysql.Open(c.Database.Dsn), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(c.Database.Dsn), &gorm.Config{
+		//不加数据库表的外键
+		DisableForeignKeyConstraintWhenMigrating: true,
+	})
 	if err != nil {
 		panic("failed to connect database")
 	}
-	if err := db.AutoMigrate(); err != nil {
+	InitDB(db)
+	return db
+}
+
+func InitDB(db *gorm.DB) {
+	if err := db.AutoMigrate(&User{}); err != nil {
 		panic(err)
 	}
-	return db
 }
