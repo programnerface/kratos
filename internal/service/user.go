@@ -3,18 +3,23 @@ package service
 import (
 	"context"
 	v1 "kratos-realworld-r/api/realworld/v1"
-	"kratos-realworld-r/internal/errors"
 )
 
 // SayHello implements realworld.GreeterServer.
 func (s *RealWorldService) Login(ctx context.Context, req *v1.LoginRequest) (reply *v1.UserReply, err error) {
-	if len(req.User.Email) == 0 {
-		return nil, errors.NewHTTPError(422, "email", "can't no empty")
+	//之前测试写在这里，这个逻辑应该写在biz层 -0719
+	//if len(req.User.Email) == 0 {
+	//	return nil, errors.NewHTTPError(422, "email", "can't no empty")
+	//}
+	//调用biz层的Login()
+	rv, err := s.uc.Login(ctx, req.User.Email, req.User.Password)
+	if err != nil {
+		return nil, err
 	}
-
 	return &v1.UserReply{
 		User: &v1.UserReply_User{
-			Username: "face",
+			Username: rv.Username,
+			Token:    rv.Token,
 		},
 	}, nil
 }
@@ -34,9 +39,15 @@ func (s *RealWorldService) Register(ctx context.Context, req *v1.RegisterRequest
 }
 
 func (s *RealWorldService) GetCurrentUser(ctx context.Context, req *v1.GetCurrentUserRequest) (reply *v1.UserReply, err error) {
+	u, err := s.uc.GetCurrentUser(ctx)
+	if err != nil {
+		return nil, err
+	}
 	return &v1.UserReply{
 		User: &v1.UserReply_User{
-			Username: "face",
+			Username: u.Username,
+			Image:    u.Image,
+			Bio:      u.Bio,
 		},
 	}, nil
 }

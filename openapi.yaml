@@ -391,6 +391,50 @@ components:
             properties:
                 body:
                     type: string
+        realworld.v1.Article:
+            type: object
+            properties:
+                slug:
+                    type: string
+                title:
+                    type: string
+                description:
+                    type: string
+                body:
+                    type: string
+                tagList:
+                    type: array
+                    items:
+                        type: string
+                createdAt:
+                    type: string
+                    format: date-time
+                updatedAt:
+                    type: string
+                    format: date-time
+                favorited:
+                    type: boolean
+                favoritesCount:
+                    type: integer
+                    format: uint32
+                author:
+                    $ref: '#/components/schemas/realworld.v1.Profile'
+        realworld.v1.Comment:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                createdAt:
+                    type: string
+                    format: date-time
+                updatedAt:
+                    type: string
+                    format: date-time
+                body:
+                    type: string
+                author:
+                    $ref: '#/components/schemas/realworld.v1.Profile'
         realworld.v1.CreateArticleRequest:
             type: object
             properties:
@@ -439,55 +483,18 @@ components:
                 articles:
                     type: array
                     items:
-                        $ref: '#/components/schemas/realworld.v1.MultipleArticlesReply_Articles'
+                        $ref: '#/components/schemas/realworld.v1.Article'
                 articlesCount:
                     type: integer
                     format: uint32
-        realworld.v1.MultipleArticlesReply_Articles:
-            type: object
-            properties:
-                slug:
-                    type: string
-                title:
-                    type: string
-                description:
-                    type: string
-                body:
-                    type: string
-                tagList:
-                    type: array
-                    items:
-                        type: string
-                createdAt:
-                    type: string
-                updatedAt:
-                    type: string
-                favorited:
-                    type: boolean
-                favoritesCount:
-                    type: integer
-                    format: uint32
-                author:
-                    $ref: '#/components/schemas/realworld.v1.MultipleArticlesReply_Author'
-        realworld.v1.MultipleArticlesReply_Author:
-            type: object
-            properties:
-                username:
-                    type: string
-                bio:
-                    type: string
-                image:
-                    type: string
-                following:
-                    type: boolean
         realworld.v1.MultipleCommentsReply:
             type: object
             properties:
                 comments:
                     type: array
                     items:
-                        $ref: '#/components/schemas/realworld.v1.MultipleCommentsReply_Comments'
-        realworld.v1.MultipleCommentsReply_Author:
+                        $ref: '#/components/schemas/realworld.v1.Comment'
+        realworld.v1.Profile:
             type: object
             properties:
                 username:
@@ -498,36 +505,11 @@ components:
                     type: string
                 following:
                     type: boolean
-        realworld.v1.MultipleCommentsReply_Comments:
-            type: object
-            properties:
-                id:
-                    type: integer
-                    format: uint32
-                createdAt:
-                    type: string
-                updatedAt:
-                    type: string
-                body:
-                    type: string
-                author:
-                    $ref: '#/components/schemas/realworld.v1.MultipleCommentsReply_Author'
         realworld.v1.ProfileReply:
             type: object
             properties:
                 profile:
-                    $ref: '#/components/schemas/realworld.v1.ProfileReply_Profile'
-        realworld.v1.ProfileReply_Profile:
-            type: object
-            properties:
-                username:
-                    type: string
-                bio:
-                    type: string
-                image:
-                    type: string
-                following:
-                    type: boolean
+                    $ref: '#/components/schemas/realworld.v1.Profile'
         realworld.v1.RegisterRequest:
             type: object
             properties:
@@ -548,74 +530,12 @@ components:
             type: object
             properties:
                 article:
-                    $ref: '#/components/schemas/realworld.v1.SingleAticeReply_Article'
-        realworld.v1.SingleAticeReply_Article:
-            type: object
-            properties:
-                slug:
-                    type: string
-                title:
-                    type: string
-                description:
-                    type: string
-                body:
-                    type: string
-                tagList:
-                    type: array
-                    items:
-                        type: string
-                createdAt:
-                    type: string
-                updatedAt:
-                    type: string
-                favorited:
-                    type: boolean
-                favoritesCount:
-                    type: integer
-                    format: uint32
-                author:
-                    $ref: '#/components/schemas/realworld.v1.SingleAticeReply_Author'
-        realworld.v1.SingleAticeReply_Author:
-            type: object
-            properties:
-                username:
-                    type: string
-                bio:
-                    type: string
-                image:
-                    type: string
-                following:
-                    type: boolean
+                    $ref: '#/components/schemas/realworld.v1.Article'
         realworld.v1.SingleCommentReply:
             type: object
             properties:
                 comment:
-                    $ref: '#/components/schemas/realworld.v1.SingleCommentReply_Comment'
-        realworld.v1.SingleCommentReply_Author:
-            type: object
-            properties:
-                username:
-                    type: string
-                bio:
-                    type: string
-                image:
-                    type: string
-                following:
-                    type: boolean
-        realworld.v1.SingleCommentReply_Comment:
-            type: object
-            properties:
-                id:
-                    type: integer
-                    format: uint32
-                createdAt:
-                    type: string
-                updatedAt:
-                    type: string
-                body:
-                    type: string
-                author:
-                    $ref: '#/components/schemas/realworld.v1.SingleCommentReply_Author'
+                    $ref: '#/components/schemas/realworld.v1.Comment'
         realworld.v1.TagListReply:
             type: object
             properties:

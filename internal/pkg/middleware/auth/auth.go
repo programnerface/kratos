@@ -13,12 +13,18 @@ import (
 	"github.com/go-kratos/kratos/v2/transport"
 )
 
+var currentUserKey struct{}
+
+type CurrentUser struct {
+	UserID uint
+}
+
 // 生成Token，传的时候可以不把整个user传进来，就传一些必要的东西，然后返回就返回一些，拿的时候就放一个userId也可以
-func GenerateToken(secret, username string) string {
+func GenerateToken(secret string, userid uint) string {
 	//SigningMethodHS256签名算法,jwt.MapClaims里面的内容就是payload,也就是你是实际要往里面写的东西
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"username": username,
-		"nbf":      time.Date(2015, 10, 10, 12, 0, 0, 0, time.UTC).Unix(),
+		"userid": userid,
+		"nbf":    time.Date(2015, 10, 10, 12, 0, 0, 0, time.UTC).Unix(),
 	})
 	tokenString, err := token.SignedString([]byte(secret))
 	if err != nil {
@@ -67,7 +73,11 @@ func JWTAuth(secret string) middleware.Middleware {
 					//fmt.Println(claims["foo"], claims["nbf"])
 					//Token肚子里的东西打印出来
 					//spew.Dump(claims)
-					spew.Dump(claims["username"])
+					spew.Dump(claims["userid"])
+					//put CurrentUser into ctx
+					if u, ok := claims["userid"]; ok {
+						ctx = context.WithValue(ctx, &CurrentUser{UserID: uint(u.(float64))}, u)
+					}
 				} else {
 					//fmt.Println(err)
 					return nil, errors.New("Token Invalid")
@@ -77,4 +87,14 @@ func JWTAuth(secret string) middleware.Middleware {
 			return handler(ctx, req)
 		}
 	}
+}
+
+// 提取当前用户信息CurrentUser  context.Context
+func FromContext(ctx context.Context) *CurrentUser {
+	return ctx.Value(currentUserKey).(*CurrentUser)
+}
+
+// 将当前用户信息存储在 context.Context
+func WithContext(ctx context.Context, user *CurrentUser) context.Context {
+	return context.WithValue(ctx, currentUserKey, user)
 }

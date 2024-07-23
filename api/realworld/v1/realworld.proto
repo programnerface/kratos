@@ -3,7 +3,7 @@ syntax = "proto3";
 package realworld.v1;
 
 import "google/api/annotations.proto";
-
+import "google/protobuf/timestamp.proto";
 option go_package = "kratos-realworld-r/api/realworld/v1;v1";
 
 /*此次项目用不到与java相关的，可以忽略或删除
@@ -253,52 +253,53 @@ message UserReply{
   User user =1;
 }
 
+message Profile{
+  string username = 1;
+  string bio = 2;
+  string image = 3;
+  bool following = 4;
+}
+
 message ProfileReply{
-  message Profile{
-    string username = 1;
-    string bio = 2;
-    string image = 3;
-    bool following = 4;
-  }
     Profile profile =1;
+}
+
+message Article {
+  string slug = 1;
+  string title = 2;
+  string description = 3;
+  string body = 4;
+  repeated string tagList = 5;
+  google.protobuf.Timestamp createdAt = 6;
+  google.protobuf.Timestamp  updatedAt = 7;
+  bool favorited = 8;
+  uint32 favoritesCount = 9;
+  Profile author = 10;
 }
 
 message SingleAticeReply {
 
-  message Author {
+ /* message Author {
     string username = 1;
     string bio = 2;
     string image = 3;
     bool following = 4;
-  }
-
-  message Article {
-    string slug = 1;
-    string title = 2;
-    string description = 3;
-    string body = 4;
-    repeated string tagList = 5;
-    string createdAt = 6;
-    string updatedAt = 7;
-    bool favorited = 8;
-    uint32 favoritesCount = 9;
-    Author author = 10;
-  }
+  }*/
 
   Article article = 1;
 }
 
 message MultipleArticlesReply {
 
-  message Author {
+  /* message Author {
     string username = 1;
     string bio = 2;
     string image = 3;
     bool following = 4;
-  }
+  }*/
 
-  message Articles {
-    string slug = 1;
+  /* message Articles {
+    String slug = 1;
     string title = 2;
     string description = 3;
     string body = 4;
@@ -308,15 +309,23 @@ message MultipleArticlesReply {
     bool favorited = 8;
     uint32 favoritesCount = 9;
     Author author = 10;
-  }
+ }*/
 
-  repeated Articles articles = 1;
+  repeated Article articles = 1;
   uint32 articles_count = 2;
+}
+
+message Comment {
+  uint32 id = 1;
+  google.protobuf.Timestamp createdAt = 2;
+  google.protobuf.Timestamp updatedAt = 3;
+  string body = 4;
+  Profile author = 5;
 }
 
 message SingleCommentReply {
 
-  message Author {
+  /*  message Author {
     string username = 1;
     string bio = 2;
     string image = 3;
@@ -329,14 +338,13 @@ message SingleCommentReply {
     string updatedAt = 3;
     string body = 4;
     Author author = 5;
-  }
+  }*/
 
   Comment comment = 1;
 }
 
 message MultipleCommentsReply {
-
-  message Author {
+  /* message Author {
     string username = 1;
     string bio = 2;
     string image = 3;
@@ -349,9 +357,9 @@ message MultipleCommentsReply {
     string updatedAt = 3;
     string body = 4;
     Author author = 5;
-  }
+  }*/
 
-  repeated Comments comments = 1;
+  repeated Comment comments = 1;
 }
 
 message TagListReply {
