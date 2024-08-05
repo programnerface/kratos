@@ -55,8 +55,10 @@ api:
 
 .PHONY: build
 # build
+#mkdir -p bin/ && go build -ldflags "-X main.Version=$(VERSION)" -o ./bin/ ./...
 build:
-	mkdir -p bin/ && go build -ldflags "-X main.Version=$(VERSION)" -o ./bin/ ./...
+
+	mkdir -p bin/ && cd cmd/kratos-realworld-r && go build -ldflags "-X main.Version=$(VERSION)" -o ../../bin/ .
 
 .PHONY: generate
 # generate
